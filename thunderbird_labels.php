@@ -243,7 +243,6 @@ class thunderbird_labels extends rcube_plugin
 	{
 		$out = '';
 		$custom_labels = $this->rc->config->get('tb_label_custom_labels');
-                $cur_lab ='';
 		for ($i = 0; $i < 8; $i++)
 		{
 			$separator = ($i == 0)? ' separator_below' :'';
@@ -412,10 +411,9 @@ class thunderbird_labels extends rcube_plugin
 		$tpl_menu = '';
 		$custom_labels = $this->rc->config->get('tb_label_custom_labels');
 		$i = 0;
-                $cur_labs = '';
 		foreach ($custom_labels as $label_name => $human_readable)
 		{
-		        $cur_labs = "LABEL$i'";
+		        $cur_labs = "LABEL$i";
                         if ($i == 7){ $cur_labs = "DONE";}
         	        $tpl_menu .= '<roundcube:button type="link-menuitem" command="plugin.thunderbird_labels.rcm_tb_label_menuclick" content="'."$i $human_readable".'" prop="'.$cur_labs.'" classAct="tb-label label'.$i.' inline active" class="tb-label label'.$i.'" data-labelname="'.$cur_labs.'" />';
 			$i++;
