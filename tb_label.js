@@ -43,7 +43,7 @@ $(function() {
   }
   labels_for_message = tb_labels_for_message;
   if (labels_for_message) {
-    labelbox_parent = $('div.message-headers');
+    labelbox_parent = $('#message-header');
     if (!labelbox_parent.length) {
       labelbox_parent = $('table.headers-table tbody tr:first-child');
     }
@@ -79,7 +79,7 @@ $(function() {
         if (typeof message.flags.tb_labels === 'object') {
           unset_labels = Array.from(message.flags.tb_labels);
         } else {
-          unset_labels = ['LABEL1', 'LABEL2', 'LABEL3', 'LABEL4', 'LABEL5'];
+          unset_labels = ['LABEL1', 'LABEL2', 'LABEL3', 'LABEL4', 'LABEL5', 'DONE'];
         }
         $.each(flags, function(flagname, flagvalue) {
           var pos;
@@ -171,7 +171,7 @@ rcm_tb_label_css = (function() {
       },
       'LABEL4': {
         'bg': '#99F',
-        'fg': '#3333FF',
+        'fg': '#0000FF',
         'light': '#0CF',
         'box': '#0CF'
       },
@@ -180,6 +180,12 @@ rcm_tb_label_css = (function() {
         'fg': '#993399',
         'light': '#B6F',
         'box': '#FF33FF'
+      },
+      'DONE': {
+        'bg': '#3C3',
+        'fg': '#00DD00',
+        'light': '#0C0',
+        'box': '#00FF00'
       }
     };
   }
@@ -302,10 +308,10 @@ rcm_tb_label_flag_toggle = function(flag_uids, toggle_label_no, onoff) {
   preview_frame = $('#messagecontframe');
   labels_for_message = rcm_tb_label_global('tb_labels_for_message');
   if (preview_frame.length) {
-    headers_table = preview_frame.contents().find('table.headers-table');
+    headers_table = preview_frame.contents().find('table.header-headers');
     label_box = preview_frame.contents().find('#labelbox');
   } else {
-    headers_table = $('table.headers-table');
+    headers_table = $('table.header-headers');
     label_box = $('#labelbox');
   }
   if (!rcmail.message_list && !headers_table.length) {
@@ -399,7 +405,7 @@ rcm_tb_label_toggle = function(toggle_label) {
     return;
   }
   if (toggle_label === 'LABEL0') {
-    toggle_labels = ['LABEL1', 'LABEL2', 'LABEL3', 'LABEL4', 'LABEL5'];
+    toggle_labels = ['LABEL1', 'LABEL2', 'LABEL3', 'LABEL4', 'LABEL5', 'DONE'];
     unset_all = true;
   } else {
     toggle_labels = [toggle_label];

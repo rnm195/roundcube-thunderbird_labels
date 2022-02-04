@@ -21,12 +21,17 @@
 
 .toolbarmenu li .label4
 {
-  color: #3333FF !important;
+  color: #0000FF !important;
 }
 
 .toolbarmenu li .label5
 {
   color: #993399 !important;
+}
+
+.toolbarmenu li .label7
+{
+  color: #00DD00 !important;
 }
 
 span.tb_label_dots {
@@ -92,10 +97,16 @@ div.contextmenu li .label3
 
 div.contextmenu li .label4
 {
-  color: #3333FF !important;
+  color: #0000FF !important;
 }
 
 div.contextmenu li .label5
 {
   color: #993399 !important;
 }
+
+div.contextmenu li .label7
+{
+  color: #00DD00 !important;
+}
+

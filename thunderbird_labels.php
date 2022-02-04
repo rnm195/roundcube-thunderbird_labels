@@ -94,7 +94,9 @@ class thunderbird_labels extends rcube_plugin
 				'LABEL2' => $this->getText('label2'),
 				'LABEL3' => $this->getText('label3'),
 				'LABEL4' => $this->getText('label4'),
-				'LABEL5' => $this->getText('label5')
+				'LABEL5' => $this->getText('label5'),
+				'LABEL6' => $this->getText('label6'),
+                                'DONE' => $this->getText('label7'),
 			));
 		}
 		// pass label strings to JS
@@ -221,7 +223,9 @@ class thunderbird_labels extends rcube_plugin
 			'LABEL2' => rcube_utils::get_input_value('custom_LABEL2', rcube_utils::INPUT_POST),
 			'LABEL3' => rcube_utils::get_input_value('custom_LABEL3', rcube_utils::INPUT_POST),
 			'LABEL4' => rcube_utils::get_input_value('custom_LABEL4', rcube_utils::INPUT_POST),
-			'LABEL5' => rcube_utils::get_input_value('custom_LABEL5', rcube_utils::INPUT_POST)
+			'LABEL5' => rcube_utils::get_input_value('custom_LABEL5', rcube_utils::INPUT_POST),
+			'LABEL6' => rcube_utils::get_input_value('custom_LABEL6', rcube_utils::INPUT_POST),
+			'DONE' => rcube_utils::get_input_value('custom_DONE', rcube_utils::INPUT_POST)
 			);
 		}
 
@@ -239,13 +243,18 @@ class thunderbird_labels extends rcube_plugin
 	{
 		$out = '';
 		$custom_labels = $this->rc->config->get('tb_label_custom_labels');
-		for ($i = 0; $i < 6; $i++)
+                $cur_lab ='';
+		for ($i = 0; $i < 8; $i++)
 		{
 			$separator = ($i == 0)? ' separator_below' :'';
-			$out .= html::tag('li',
+			$cur_lab = "LABEL$i";
+                        if ($i == 7){
+                            $cur_lab ='DONE';
+                        }
+                        $out .= html::tag('li',
 				null,
 				$this->api->output->button(array(
-					'label' => rcube::Q($i.' '.$custom_labels["LABEL$i"]),
+					'label' => rcube::Q($i.' '.$custom_labels[$cur_lab]),
 					'command' => 'test.comm.and',
 					'type' => 'link',
 					'class' => 'label'.$i.$separator,
@@ -335,7 +344,7 @@ class thunderbird_labels extends rcube_plugin
 
 		# FIXME: there is no reliable way to know if roundcube mangled a label of different client
 		#        here is just a workaround for the known Thunderbird labels
-		if (preg_match("/^LABEL[1-5]$/", $toggle_label)) # only for Thunderbird labels
+		if (preg_match("/^LABEL[1-7]$/", $toggle_label)) # only for Thunderbird labels
 		{
 			$imap->set_flag($flag_uids, "UN$toggle_label", $mbox); # quickhack to remove non-$ labels
 			$imap->set_flag($unflag_uids, "UN$toggle_label", $mbox); # quickhack to remove non-$ labels
@@ -403,9 +412,12 @@ class thunderbird_labels extends rcube_plugin
 		$tpl_menu = '';
 		$custom_labels = $this->rc->config->get('tb_label_custom_labels');
 		$i = 0;
+                $cur_labs = '';
 		foreach ($custom_labels as $label_name => $human_readable)
 		{
-			$tpl_menu .= '<roundcube:button type="link-menuitem" command="plugin.thunderbird_labels.rcm_tb_label_menuclick" content="'."$i $human_readable".'" prop="LABEL'.$i.'" classAct="tb-label label'.$i.' inline active" class="tb-label label'.$i.'" data-labelname="LABEL'.$i.'" />';
+		        $cur_labs = "LABEL$i'";
+                        if ($i == 7){ $cur_labs = "DONE";}
+        	        $tpl_menu .= '<roundcube:button type="link-menuitem" command="plugin.thunderbird_labels.rcm_tb_label_menuclick" content="'."$i $human_readable".'" prop="'.$cur_labs.'" classAct="tb-label label'.$i.' inline active" class="tb-label label'.$i.'" data-labelname="'.$cur_labs.'" />';
 			$i++;
 		}
 		$html = $this->template2html($tpl.$tpl_menu.$tpl_end);
