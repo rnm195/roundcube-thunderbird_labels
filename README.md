@@ -34,7 +34,7 @@
 #### manual:
 
 1. unpack to plugins directory
-1. add `, 'thunderbird_labels'` to `$rcmail_config['plugins']` in roundcubes `config/config.inc.php`
+1. add `, 'thunderbird_labels'` to `$config['plugins']` in roundcubes `config/config.inc.php`
 1. rename `config.inc.php.dist` to `config.inc.php`
 1. if you run a custom skin, e.g. `silver` then you should also symlink or copy the skins folder
    of the plugin to the corresponding skins name, for the example given:
@@ -46,13 +46,13 @@
 
 ### CONFIGURE
 
-See `config.inc.php`
+See `config.inc.php` for more details
 
 - `tb_label_enable = true/false` (can be changed by user in prefs UI)
 - `tb_label_modify_labels = true/false`
 - `tb_label_enable_contextmenu = true/false`
 - `tb_label_enable_shortcuts = true/false` (can be changed by user in prefs UI)
-- `tb_label_style = 'bullets'` or `'thunderbird'`
+- `tb_label_style = 'bullets'`, `'thunderbird'` or `'badges'`
 
 ### Author
 Michael Kefeder

@@ -43,11 +43,11 @@ $(function() {
   }
   labels_for_message = tb_labels_for_message;
   if (labels_for_message) {
-    labelbox_parent = $('#message-header');
+    labelbox_parent = $('div.message-headers, #message-header');
     if (!labelbox_parent.length) {
-      labelbox_parent = $('table.headers-table tbody tr:first-child');
+      labelbox_parent = $('table.headers-table');
     }
-    labelbox_parent.append('<div id="labelbox"></div>');
+    labelbox_parent.append('<div id="labelbox" class="' + rcmail.env.tb_label_style + '"></div>');
     labels_for_message.sort(function(a, b) {
       return a - b;
     });
@@ -220,23 +220,35 @@ rcm_tb_label_insert = function(uid, row) {
   }
   message = rcmail.env.messages[uid];
   rowobj = $(row.obj);
-  rowobj.find('td.subject').append('<span class="tb_label_dots"></span>');
+  rowobj.find('td.subject').append('<span class="tb_label_dots ' + rcmail.env.tb_label_style + '"></span>');
   if (message.flags && message.flags.tb_labels) {
     if (message.flags.tb_labels.length) {
       spanobj = rowobj.find('td.subject span.tb_label_dots');
       message.flags.tb_labels.sort(function(a, b) {
         return a - b;
       });
+	  ref = message.flags.tb_labels;
       if (rcmail.env.tb_label_style === 'bullets') {
-        ref = message.flags.tb_labels;
         for (i = 0, len = ref.length; i < len; i++) {
           label_name = ref[i];
           spanobj.append('<span class="tb_label_' + label_name + '" title="' + i18n_label(label_name) + '">&#8226;</span>');
         }
+      } else if (rcmail.env.tb_label_style === 'badges') {
+		for (i = 0, len = ref.length; i < len; i++) {
+			label_name = ref[i];
+			if (rcmail.env.tb_label_custom_labels[label_name]) {
+				spanobj.append(
+					'<span class="tb_label_badges badge ' +
+						label_name.toLowerCase() +
+						'">' +
+						i18n_label(label_name) +
+						'</span>'
+				);
+			}
+		}
       } else {
-        ref1 = message.flags.tb_labels;
-        for (j = 0, len1 = ref1.length; j < len1; j++) {
-          label_name = ref1[j];
+        for (j = 0, len1 = ref.length; j < len1; j++) {
+          label_name = ref[j];
           rowobj.addClass('tb_label_' + label_name);
         }
       }
@@ -319,7 +331,7 @@ rcm_tb_label_flag_toggle = function(flag_uids, toggle_label_no, onoff) {
   }
   if (headers_table.length) {
     if (onoff === true) {
-      if (rcmail.env.tb_label_style === 'bullets') {
+      if (rcmail.env.tb_label_style === 'bullets' || rcmail.env.tb_label_style === 'badges') {
         label_box.find('span.box_tb_label_' + escape_jquery_selector(toggle_label_no)).remove();
         label_box.append('<span class="box_tb_label_' + toggle_label_no + '">' + i18n_label(toggle_label_no) + '</span>');
       } else {
@@ -328,7 +340,7 @@ rcm_tb_label_flag_toggle = function(flag_uids, toggle_label_no, onoff) {
       }
       labels_for_message.push(toggle_label_no);
     } else {
-      if (rcmail.env.tb_label_style === 'bullets') {
+      if (rcmail.env.tb_label_style === 'bullets' || rcmail.env.tb_label_style === 'badges') {
         label_box.find('span.box_tb_label_' + escape_jquery_selector(toggle_label_no)).remove();
       } else {
         headers_table.removeClass('tb_label_' + toggle_label_no);
@@ -358,6 +370,8 @@ rcm_tb_label_flag_toggle = function(flag_uids, toggle_label_no, onoff) {
       spanobj = rowobj.find('td.subject span.tb_label_dots');
       if (rcmail.env.tb_label_style === 'bullets') {
         spanobj.append('<span class="tb_label_' + toggle_label_no + '" title="' + i18n_label(toggle_label_no) + '">&#8226;</span>');
+      } else if (rcmail.env.tb_label_style === 'badges') {
+		spanobj.append('<span class="tb_label_badges badge ' + toggle_label_no.toLowerCase() +	'">' + i18n_label(toggle_label_no) + '</span>');
       } else {
         rowobj.addClass('tb_label_' + toggle_label_no);
       }
@@ -366,6 +380,8 @@ rcm_tb_label_flag_toggle = function(flag_uids, toggle_label_no, onoff) {
       rowobj = $(row.obj);
       if (rcmail.env.tb_label_style === 'bullets') {
         rowobj.find('td.subject span.tb_label_dots span.tb_label_' + toggle_label_no).remove();
+      } else if (rcmail.env.tb_label_style === 'badges') {
+		rowobj.find('td.subject span.tb_label_dots span.tb_label_badges.' + toggle_label_no.toLowerCase()).remove();
       } else {
         rowobj.removeClass('tb_label_' + toggle_label_no);
       }
