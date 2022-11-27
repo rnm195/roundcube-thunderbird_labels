@@ -14,6 +14,7 @@ class thunderbird_labels extends rcube_plugin
 	private $rc;
 	private $map;
 	private $_custom_flags_allowed = null;
+	const LABEL_STYLES = ['thunderbird', 'bullets', 'badges'];
 
 	function init()
 	{
@@ -163,7 +164,7 @@ class thunderbird_labels extends rcube_plugin
 				'name' => $key,
 				'id' => $key
 			));
-			$select->add([$this->gettext('thunderbird'), $this->gettext('bullets'), $this->gettext('badges')], ['thunderbird', 'bullets', 'badges']);
+			$select->add([$this->gettext('thunderbird'), $this->gettext('bullets'), $this->gettext('badges')], self::LABEL_STYLES);
 			$content = $select->show($this->rc->config->get($key));
 
 			$args['blocks']['tb_label']['options'][$key] = array(
@@ -212,7 +213,13 @@ class thunderbird_labels extends rcube_plugin
 		  $args['prefs']['tb_label_enable_shortcuts'] = rcube_utils::get_input_value('tb_label_enable_shortcuts', rcube_utils::INPUT_POST) ? true : false;
 
 		if (!in_array('tb_label_style', $dont_override))
-			$args['prefs']['tb_label_style'] = rcube_utils::get_input_value('tb_label_style', rcube_utils::INPUT_POST);
+		{
+			$tb_label_style = rcube_utils::get_input_value('tb_label_style', rcube_utils::INPUT_POST);
+			if (in_array($tb_label_style, self::LABEL_STYLES))
+			{
+				$args['prefs']['tb_label_style'] = $tb_label_style;
+			}
+		}
 
 		if (!in_array('tb_label_custom_labels', $dont_override)
 			&& $this->rc->config->get('tb_label_modify_labels'))
@@ -413,9 +420,10 @@ class thunderbird_labels extends rcube_plugin
 		$i = 0;
 		foreach ($custom_labels as $label_name => $human_readable)
 		{
-		        $cur_labs = "LABEL$i";
-                        if ($i == 7){ $cur_labs = "DONE";}
-        	        $tpl_menu .= '<roundcube:button type="link-menuitem" command="plugin.thunderbird_labels.rcm_tb_label_menuclick" content="'."$i $human_readable".'" prop="'.$cur_labs.'" classAct="tb-label label'.$i.' inline active" class="tb-label label'.$i.'" data-labelname="'.$cur_labs.'" />';
+			//RNM code to convert LABEL7 to DONE
+		    $cur_labs = "LABEL$i";
+            if ($i == 7){ $cur_labs = "DONE";}
+        	$tpl_menu .= '<roundcube:button type="link-menuitem" command="plugin.thunderbird_labels.rcm_tb_label_menuclick" content="'.rcube::Q("$i $human_readable").'" prop="'.$cur_labs.'" classAct="tb-label label'.$i.' inline active" class="tb-label label'.$i.'" data-labelname="'.$cur_labs.'" />';
 			$i++;
 		}
 		$html = $this->template2html($tpl.$tpl_menu.$tpl_end);
